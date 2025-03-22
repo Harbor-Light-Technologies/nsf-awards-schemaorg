@@ -63,6 +63,7 @@ NSF_AWARDS_API_FIELDS = 'rpp,offset,id,agency,awardeeCity,awardeeCountryCode,awa
 NSF_AWARDS_API_URL = "{part}.json?{criteria}&printFields={fields}&offset={o}"
 NSF_AWARD_URL = "{path}/{id}.json?printFields={fields}"
 NSF_AWARD_API_DOCS = 'https://resources.research.gov/common/webapi/awardapisearch-v1.htm'
+NSF_AWARD_PAGE = 'https://www.nsf.gov/awardsearch/showAward?AWD_ID={id}'
 
 PAGE_SIZE = 25
 
@@ -177,7 +178,8 @@ def get_nsf_awards(graph, offset=0):
     award_id = get_uri(id=hit['id'], modifier='nsf-award-number')
     graph.add((award, SCHEMA.identifier, award_id))
     get_schemaorg_identifier(graph=graph, value=hit['id'], propertyID='id', subject=award_id)
-    graph.add((award, SCHEMA.url, Literal(NSF_AWARD_URL.format(id=hit['id'], path=NSF_AWARDS_API_PART, fields=NSF_AWARDS_API_FIELDS), datatype=XSD.anyURI)))
+    graph.add((award, SCHEMA.url, Literal(NSF_AWARD_PAGE.format(id=hit['id']), datatype=XSD.anyURI)))
+    graph.add((award, SCHEMA.isBasedOn, Literal(NSF_AWARD_URL.format(id=hit['id'], path=NSF_AWARDS_API_PART, fields=NSF_AWARDS_API_FIELDS), datatype=XSD.anyURI)))
     if 'title' in hit:
       graph.add((award, SCHEMA.name, Literal(hit['title'], datatype=XSD.string)))
     if 'date' in hit:
